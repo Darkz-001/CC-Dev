@@ -61,7 +61,7 @@ function move(n, dir, mine)
         dir = "forward"
     end
 
-    if string.find(" false no n _ void ", " " .. mine .. " ") then
+    if string.find(" false no n _ void nil ", " " .. tostring(mine) .. " ") then
         mine = false
     end
 
