@@ -1,24 +1,28 @@
 CHANNEL = 1204
-COMMANDS = {
-    --["name"] = function
-    ["break"] = dig,
-    ["move"] = move,
-    ["turn"] = turn,
-    ["eval"] = evaluateSlot,
-    ["select"] = selectSlot,
-    ["refuel"] = refuel,
-    ["inspect"] = inspect,
-    ["place"] = place,
-    ["getdistance"] = function () return "You shouldn't see this" end,
-    ["terminate"] = function () return "Goodbye!" end,
-    ["put"] = put,
-    ["take"] = take,
-    ["emit"] = emit,
-    ["rebootother"] = rebootOther
-}
+
+function loadCommands()
+    COMMANDS = {
+        --["name"] = function
+        ["break"] = dig,
+        ["move"] = move,
+        ["turn"] = turn,
+        ["eval"] = evaluateSlot,
+        ["select"] = selectSlot,
+        ["refuel"] = refuel,
+        ["inspect"] = inspect,
+        ["place"] = place,
+        ["getdistance"] = function () return "You shouldn't see this" end,
+        ["terminate"] = function () return "Goodbye!" end,
+        ["put"] = put,
+        ["take"] = take,
+        ["emit"] = emit,
+        ["rebootother"] = rebootOther
+    }
+end
 
 
 function main()
+    loadCommands()
     modem = peripheral.find("modem")
     if modem == nil then
         print("No modem attached")
@@ -33,8 +37,6 @@ function main()
             local tokens = splitTokens(message, true)
             command = table.remove(tokens, 1)
             func = COMMANDS[command]
-            print(command)
-            print(func ~= nil)
             if func ~= nil then
                 reply = func(table.unpack(tokens))
                 if command == "getdistance" then
