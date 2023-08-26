@@ -33,6 +33,8 @@ function main()
             local tokens = splitTokens(message, true)
             command = table.remove(tokens, 1)
             func = COMMANDS[command]
+            print(command)
+            print(func ~= nil)
             if func ~= nil then
                 reply = func(table.unpack(tokens))
                 if command == "getdistance" then
