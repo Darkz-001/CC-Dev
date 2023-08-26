@@ -101,7 +101,7 @@ function move(n, dir, mine)
         turtle.turnLeft()
         move(n, "forward", mine)
         turtle.turnRight()
-    elseif dir == "back" or dir == "r" then
+    elseif dir == "back" or dir == "b" then
         if mine then
             turtle.turnLeft()
             turtle.turnLeft()
