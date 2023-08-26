@@ -301,9 +301,9 @@ end
 
 function emit(side)
     if string.find(" front back left right top bottom ", " " .. side .. " ") then
-        redstone.setAnalogOutput(side, true)
+        redstone.setOutput(side, true)
         sleep(.1)
-        redstone.setAnalogOutput(side, false)
+        redstone.setOutput(side, false)
     else
         return "Invalid side"
     end
