@@ -31,7 +31,7 @@ function main()
         local reply = "You shouldn't see this"
         if channel == CHANNEL then
             local tokens = splitTokens(message, true)
-            command = table.remove(tokens)
+            command = table.remove(tokens, 1)
             if COMMANDS[command] then
                 reply = COMMANDS[command](table.unpack(tokens))
                 if command == "getdistance" then
