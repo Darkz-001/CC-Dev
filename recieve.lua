@@ -299,10 +299,18 @@ function take(dir)
 end
 
 
-function emit(side)
+function emit(side, sec)
     if string.find(" front back left right top bottom ", " " .. side .. " ") then
+        if sec == nil then
+            sec = 0.5
+        else
+            sec = tonumber(sec)
+            if sec == nil then
+                return "Seconds must be a NUMBER"
+            end
+        end
         redstone.setOutput(side, true)
-        sleep(.1)
+        sleep(sec)
         redstone.setOutput(side, false)
     else
         return "Invalid side"
