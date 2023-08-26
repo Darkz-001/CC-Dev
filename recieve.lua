@@ -32,8 +32,9 @@ function main()
         if channel == CHANNEL then
             local tokens = splitTokens(message, true)
             command = table.remove(tokens, 1)
-            if COMMANDS[command] then
-                reply = COMMANDS[command](table.unpack(tokens))
+            func = COMMANDS[command]
+            if func ~= nil then
+                reply = func(table.unpack(tokens))
                 if command == "getdistance" then
                     reply = tostring(distance)
                 end
@@ -278,8 +279,18 @@ function take(dir)
         dir = "forward"
     end
 
+    local temp = false
 
-    local temp = turtle.suck()
+    if dir == "forward" or dir == "f" then
+        temp = turtle.suck()
+    elseif dir == "up" or dir == "u" then
+        temp = turtle.suckUp()
+    elseif dir == "down" or dir == "down" then
+        temp = turtle.suckDown()
+    else
+        return "Invalid direction"
+    end
+
     return tostring(temp)
 end
 
