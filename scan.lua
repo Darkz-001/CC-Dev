@@ -20,3 +20,6 @@ end
 function getDistance(block)
     return math.abs(block.x) + math.abs(block.y) + math.abs(block.z)
 end
+
+
+main(target)
