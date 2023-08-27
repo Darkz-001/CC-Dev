@@ -294,7 +294,7 @@ function put(dir, all)
         local slot, n = turtle.getSelectedSlot(), 0
         for i = 1, 16 do
             turtle.select(i)
-            if turtle.d() then
+            if d() then
                 n = n + 1
             end
         end
