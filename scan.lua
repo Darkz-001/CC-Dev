@@ -1,5 +1,3 @@
-target = ...
-
 function main(target)
     scanner = peripheral.find("geoScanner")
 
@@ -22,4 +20,4 @@ function getDistance(block)
 end
 
 
-main(target)
+main(...)
