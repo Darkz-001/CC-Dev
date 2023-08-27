@@ -64,14 +64,14 @@ function move(n, dir, mine)
     if string.find(" false no n _ void nil ", " " .. tostring(mine) .. " ") then
         mine = false
     end
-
+    
     dir = string.lower(dir)
     n = tonumber(n)
     
     if n == nil then
         return "You must move a NUMBER of spaces"
     end
-
+    
     if dir == "forward" or dir == "f" then
         for i = 1, n do
             if mine then
@@ -116,7 +116,7 @@ function move(n, dir, mine)
     else
         return "Invalid Direction"
     end
-
+    
     local fuel = turtle.getFuelLevel()
     if fuel > 300 then
         return "Arrived"
@@ -137,27 +137,27 @@ function selectSlot(n)
         
         if n < 1 or n > 16 then
             return "Slot must be between 1 and 16"
-    end
-
-    turtle.select(n)
-    return "Selected slot: " .. tostring(n)
-end
-
-
-function evaluateSlot(n)
-    n = tonumber(n)
-    if n ~= nil then
-        if n < 1 or n > 16 then
-            return "Slot must be between 1 and 16"
         end
+        
+        turtle.select(n)
+        return "Selected slot: " .. tostring(n)
     end
     
-    local item = turtle.getItemDetail(n)
     
-    if item ~= nil then
-        return tostring(item.name) .. " - " .. tostring(item.count)
-    else
-        return "No item in slot"
+    function evaluateSlot(n)
+        n = tonumber(n)
+        if n ~= nil then
+            if n < 1 or n > 16 then
+                return "Slot must be between 1 and 16"
+            end
+        end
+        
+        local item = turtle.getItemDetail(n)
+        
+        if item ~= nil then
+            return tostring(item.name) .. " - " .. tostring(item.count)
+        else
+            return "No item in slot"
     end
 end
 
@@ -209,7 +209,7 @@ function inspect(dir)
     else
         return "Invalid direction"
     end
-
+    
     if isThere then
         if type(data) == "table" then
             return tostring(data.name)
@@ -226,7 +226,7 @@ function dig(dir)
     if dir == nil then
         dir = "forward"
     end
-
+    
     local ret
     
     if dir == "forward" or dir == "f" then
@@ -251,7 +251,7 @@ function place(dir, text)
     if dir == nil then
         dir = "forward"
     end
-
+    
     local ret
     
     if dir == "forward" or dir == "f" then
@@ -263,7 +263,7 @@ function place(dir, text)
     else
         return "Invalid direction"
     end
-
+    
     if ret then
         return ret
     else
@@ -272,29 +272,71 @@ function place(dir, text)
 end
 
 
-function put()
+function put(dir, all)
     local temp = turtle.drop()
+    if string.find(" false no n _ void nil ", " " .. tostring(all) .. " ") then
+        all = false
+    end
+    
+    local temp, d
+    
+    if dir == "forward" or dir == "f" then
+        d = turtle.drop
+    elseif dir == "up" or dir == "u" then
+        d = turtle.dropUp
+    elseif dir == "down" or dir == "down" then
+        d = turtle.dropDown
+    else
+        return "Invalid direction"
+    end
+    
+    if all then
+        local slot, n = turtle.getSelectedSlot(), 0
+        for i = 1, 16 do
+            turtle.select(i)
+            if turtle.d() then
+                n = n + 1
+            end
+        end
+        turtle.select(slot)
+        temp = "Put away " .. tostring(n) .. " different items"
+    else
+        temp = d()
+    end
+    
     return tostring(temp)
 end
 
 
-function take(dir)
+function take(dir, all)
     if dir == nil then
         dir = "forward"
     end
 
-    local temp = false
-
+    if string.find(" false no n _ void nil ", " " .. tostring(all) .. " ") then
+        all = false
+    end
+    
+    local temp, d
+    
     if dir == "forward" or dir == "f" then
-        temp = turtle.suck()
+        d = turtle.suck
     elseif dir == "up" or dir == "u" then
-        temp = turtle.suckUp()
+        d = turtle.suckUp
     elseif dir == "down" or dir == "down" then
-        temp = turtle.suckDown()
+        d = turtle.suckDown
     else
         return "Invalid direction"
     end
-
+    
+    if all then
+        local n = 0
+        while d() do n = n + 1 end
+        temp = "Got " .. tostring(n) .. " different items"
+    else
+        temp = d()
+    end
+    
     return tostring(temp)
 end
 
@@ -315,7 +357,7 @@ function emit(side, sec)
     else
         return "Invalid side"
     end
-
+    
     return "Signal emitted"
 end
 
@@ -325,11 +367,11 @@ function rebootOther()
     if other == nil then
         other = peripheral.find("turtle")
     end
-
+    
     if other == nil then
         return "No computer to reboot"
     end
-
+    
     if other.isOn() then
         other.reboot()
     else
