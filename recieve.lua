@@ -273,7 +273,6 @@ end
 
 
 function put(dir, all)
-    local temp = turtle.drop()
     if string.find(" false no n _ void nil ", " " .. tostring(all) .. " ") then
         all = false
     end
