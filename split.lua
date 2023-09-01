@@ -38,9 +38,21 @@ function pop(inv)
         return
     end
 
-    for slot, item in pairs(items) do
-        return slot, item.name, item.count
-    end
+    items = detach_key(items)
+    local item = items[math.random(#items)]
+    return item.key, item.value.name, item.value.count
 end
+
+function detach_key(table)
+    new = {}
+    for key, value in pairs(table) do
+        table.insert({
+            key = key,
+            value = value
+        })
+    end
+    return new
+end
+
 
 main()
