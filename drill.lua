@@ -5,7 +5,7 @@ turtle.refuel()
 block = {name = "{"}
 n = 0
 
-while not string.find(block.name, target) do
+while not string.find(block.name, target) or block.name == "minecraft:bedrock" do
     turtle.digDown()
     turtle.down()
     n = n + 1
