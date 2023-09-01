@@ -1,7 +1,7 @@
 ORIGIN = "back"
 
 SPLIT1 = {
-    name = "minceraft:brich_log", 
+    name = "minecraft:birch_log", 
     destination = "right"
 }
 SPLIT2 = {
