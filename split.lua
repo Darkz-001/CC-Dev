@@ -46,10 +46,12 @@ end
 function detach_key(table)
     new = {}
     for key, value in pairs(table) do
-        table.insert({
-            key = key,
-            value = value
-        })
+        table.insert(new,
+            {
+                key = key,
+                value = value
+            }
+        )
     end
     return new
 end
