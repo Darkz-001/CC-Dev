@@ -43,9 +43,9 @@ function pop(inv)
     return item.key, item.value.name, item.value.count
 end
 
-function detach_key(table)
+function detach_key(t)
     new = {}
-    for key, value in pairs(table) do
+    for key, value in pairs(t) do
         table.insert(new,
             {
                 key = key,
