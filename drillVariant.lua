@@ -6,7 +6,10 @@ block = {name = "{"}
 n = 0
 
 while not string.find(block.name, target) and block.name ~= "minecraft:bedrock" do
-    turtle.digDown()
+    if turtle.detectDown() then
+        turtle.digDown()
+    end
+
     turtle.down()
 
     if not turtle.detect() or replace then
