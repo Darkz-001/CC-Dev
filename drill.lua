@@ -18,3 +18,9 @@ end
 for i = 1, n do
     turtle.up()
 end
+
+if block.name == "minecraft:bedrock" then
+    print("Hit Bedrock")
+else
+    print(block.name, "found", tostring(n), "blocks down")
+end
