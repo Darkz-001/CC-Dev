@@ -1,4 +1,4 @@
-target = ...
+target, replace = ...
 
 turtle.refuel()
 
@@ -9,10 +9,15 @@ while not string.find(block.name, target) and block.name ~= "minecraft:bedrock" 
     turtle.digDown()
     turtle.down()
 
-    if not turtle.detect() then
+    if not turtle.detect() or replace then
         if turtle.getItemCount() == 0 then
             turtle.select(turtle.getSelectedSlot() + 1)
         end
+
+        if turtle.detect() then
+            turtle.dig()
+        end
+
         turtle.place()
     end
 
