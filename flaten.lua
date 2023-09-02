@@ -1,8 +1,6 @@
-
-
 function main(l, w)
-    l, w = tonumber(l) - 1, tonumber(w) - 1
-    
+    l, w = tonumber(l) - 1, tonumber(w)
+
     for i = 1, w do
         for j = 1, l do
             mineForward()
@@ -15,9 +13,11 @@ function main(l, w)
             turn = turtle.turnRight
         end
 
-        turn()
-        mineForward()
-        turn()
+        if i ~= w then
+            turn()
+            mineForward()
+            turn()
+        end
     end
 end
 
