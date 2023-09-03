@@ -1,4 +1,4 @@
-function main(l, w, replace)
+function main(l, w, block, replace)
     l, w = tonumber(l) - 1, tonumber(w)
 
     for i = 1, w do
@@ -38,7 +38,9 @@ function mineForward_placeDown(replace)
             sleep(0.1)
         end
 
-        if turtle.getItemCount() == 0 then
+        if turtle.getItemDetail() == nil then
+            turtle.select(turtle.getSelectedSlot() + 1)
+        elseif not string.find(turtle.getItemDetail().name, block) then
             turtle.select(turtle.getSelectedSlot() + 1)
         end
 
