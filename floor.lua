@@ -3,7 +3,7 @@ function main(l, w, block, replace)
 
     for i = 1, w do
         for j = 1, l do
-            mineForward_placeDown(replace)
+            mineForward_placeDown(block, replace)
         end
 
         local turn
@@ -15,14 +15,14 @@ function main(l, w, block, replace)
 
         if i ~= w then
             turn()
-            mineForward_placeDown(replace)
+            mineForward_placeDown(block, replace)
             turn()
         end
     end
 end
 
 
-function mineForward_placeDown(replace)
+function mineForward_placeDown(block, replace)
     while turtle.detect() do
         turtle.dig()
         sleep(0.1)
