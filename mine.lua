@@ -25,7 +25,7 @@ function main(target, targetAmount)
         z = 0
     }
 
-    while obtained < targetAmount and turtle.getFuelLevel < getDistance(traveled) do
+    while obtained < targetAmount and turtle.getFuelLevel() < getDistance(traveled) do
         
     end
 end
