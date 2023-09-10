@@ -1,3 +1,6 @@
+Scanner = peripheral.find("geoScanner")
+
+
 function main(target, targetAmount)
     turtle.refuel()
 
@@ -104,9 +107,8 @@ end
 
 
 function find(target)
-    scanner = peripheral.find("geoScanner")
-
-    blocks = scanner.scan(8)
+    blocks = Scanner.scan(8)
+    sleep(1)
 
     dis = math.huge
     local closestBlock
