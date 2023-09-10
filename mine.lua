@@ -107,9 +107,8 @@ end
 
 
 function find(target)
-    blocks = Scanner.scan(8)
-    
     while blocks == nil do
+        blocks = Scanner.scan(8)
         sleep(0.5)
     end
 
