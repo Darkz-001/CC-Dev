@@ -107,9 +107,11 @@ end
 
 
 function find(target)
+    blocks = Scanner.scan(8)
+    
     while blocks == nil do
         blocks = Scanner.scan(8)
-        sleep(1.5)
+        sleep(0.75)
     end
 
     dis = math.huge
