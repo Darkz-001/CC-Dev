@@ -27,8 +27,21 @@ function main(target, targetAmount)
 
     while obtained < targetAmount and turtle.getFuelLevel() < getDistance(traveled) do
         block = find(target)
-        GoTo(block.x, block.y, block.z)
-        traveled = addDistance(traveled, block)
+        if block ~= nil then
+            GoTo(block.x, block.y, block.z)
+            traveled = addDistance(traveled, block)
+            obtained = obtained + 1
+        elseif traveled.y == 0 then
+            GoTo(8, 0, 0)
+            traveled = addDistance(traveled, {
+                x = 8,
+                y = 0,
+                z = 0
+            })
+        else
+            GoTo(0, -traveled.y, 0)
+            traveled.y = 0
+        end
     end
     GoTo(-traveled.x, -traveled.y, -traveled.z)
 end
@@ -58,14 +71,14 @@ function GoTo(x, y, z)
 
     if y > 0 then
         for i = 1, y do
-            while not turtle.forward() do
-                turtle.dig()
+            while not turtle.up() do
+                turtle.digUp()
             end
         end
     elseif y < 0 then
-        for i = 1, y do
-            while not turtle.forward() do
-                turtle.dig()
+        for i = 1, -y do
+            while not turtle.down() do
+                turtle.digDown()
             end
         end
     end
