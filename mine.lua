@@ -30,6 +30,7 @@ function main(target, targetAmount)
         GoTo(block.x, block.y, block.z)
         traveled = addDistance(traveled, block)
     end
+    GoTo(-traveled.x, -traveled.y, -traveled.z)
 end
 
 
