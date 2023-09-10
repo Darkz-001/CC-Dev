@@ -8,6 +8,7 @@ function main(target)
     for i, block in pairs(blocks) do
         if getDistance(block) < dis and string.find(block.name, target) then
             Closest = block
+            dis = getDistance(block)
         end
     end
 

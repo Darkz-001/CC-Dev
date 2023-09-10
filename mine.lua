@@ -114,6 +114,7 @@ function find(target)
     for i, block in pairs(blocks) do
         if getDistance(block) < dis and string.find(block.name, target) then
             closestBlock = block
+            dis = getDistance(block)
         end
     end
 
@@ -122,7 +123,7 @@ end
 
 
 function getDistance(block)
-    return math.abs(block.x) + math.abs(block.y) + math.abs(block.z)
+    return (math.abs(block.x) + math.abs(block.y) + math.abs(block.z))
 end
 
 
