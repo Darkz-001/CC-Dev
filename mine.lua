@@ -26,7 +26,9 @@ function main(target, targetAmount)
     }
 
     while obtained < targetAmount and turtle.getFuelLevel() < getDistance(traveled) do
-        
+        block = find(target)
+        GoTo(block.x, block.y, block.z)
+        traveled = addDistance(traveled, block)
     end
 end
 
