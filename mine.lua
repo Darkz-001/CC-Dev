@@ -108,7 +108,10 @@ end
 
 function find(target)
     blocks = Scanner.scan(8)
-    sleep(1)
+    
+    while blocks == nil do
+        sleep(0.5)
+    end
 
     dis = math.huge
     local closestBlock
