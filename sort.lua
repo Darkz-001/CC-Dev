@@ -1,29 +1,32 @@
 ORIGIN = "back"
 
-SPLIT1 = {
-    name = "minecraft:birch_log", 
-    destination = "right"
-}
-SPLIT2 = {
-    name = "techreborn:rubber_log",
-    destination = "left"
+EXACT = false
+
+
+SPLITS = {
+    ["crushed"] = "left"
 }
 
-WASTE = "bottom"
+OTHER = "right"
 
 function main()
     read = peripheral.wrap(ORIGIN)
 
     while true do
         local slot, name, count = pop(read)
-        
+
         if slot ~= nil then
-            if name == SPLIT1.name then
-                read.pushItems(SPLIT1.destination, slot, count)
-            elseif name == SPLIT2.name then
-                read.pushItems(SPLIT2.destination, slot, count)
-            else
-                read.pushItems(WASTE, slot, count)
+            local matches = false
+            for filter, wrap in pairs(SPLITS) do
+                if (EXACT and filter == name) or (not EXACT and string.find(name, filter)) then
+                    read.pushItems(wrap, slot, count)
+                    matches = true
+                    break
+                end
+            end
+
+            if not matches then
+                read.pushItems(OTHER, slot, count)
             end
         end
 
