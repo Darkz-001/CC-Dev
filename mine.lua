@@ -28,7 +28,7 @@ function main(target, targetAmount)
         z = 0
     }
 
-    while obtained < targetAmount and turtle.getFuelLevel() > getDistance(traveled) do
+    while obtained < targetAmount and turtle.getFuelLevel() > 2 * getDistance(traveled) do
         block = find(target)
         if block ~= nil then
             GoTo(block.x, block.y, block.z)
