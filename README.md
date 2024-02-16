@@ -4,8 +4,8 @@ computer craft things
 * drill ($)
 * drillVariant
 * flatten ($$)
-* floor ($$$[$])
-* install ($[$] #)
+* floor ($$$ ~$)
+* install ($ ~$ #)
 * mine ($$ +)
 * recieve (% send)
 * scan ($ +)
@@ -14,7 +14,7 @@ computer craft things
 
 key:
 ($): uses command line arguments
-([$]): optional command line arguments
+(~$): optional command line arguments
 (+): requires Advanced Peripherals
 (#): requires http to be enabled
 (%): uses user-modified global variables
