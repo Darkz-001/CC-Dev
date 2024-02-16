@@ -1,25 +1,21 @@
 # CC-Dev
 computer craft things
 
-recieve
-```
-Turtle with modem
-Breaking blocks requires a pickaxe
+drill ($)
+drillVariant
+flatten ($$)
+floor ($$$[$])
+install ($[$] #)
+mine ($$ +)
+recieve (% send)
+scan ($ +)
+send ($ recieve)
+sort (%)
 
-Must be controlled by send
-```
-
-send
-```
-Any computer with a modem (pocket computer preferred)
-
-Sends signals to turtle with recieve
-```
-
-scan
-```
-Any computer with a geo scanner
-
-Scans nearby blocks for a target specifed in-line
-EX: > scan iron_ore
-```
+key:
+($): uses command line arguments
+([$]): optional command line arguments
+(+): requires Advanced Peripherals
+(#): requires http to be enabled
+(%): uses user-modified global variables
+(PROGRAM): requires specified program running elsewhere to work
