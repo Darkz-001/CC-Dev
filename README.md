@@ -1,16 +1,16 @@
 # CC-Dev
 computer craft things
 
-drill ($)
-drillVariant
-flatten ($$)
-floor ($$$[$])
-install ($[$] #)
-mine ($$ +)
-recieve (% send)
-scan ($ +)
-send ($ recieve)
-sort (%)
+* drill ($)
+* drillVariant
+* flatten ($$)
+* floor ($$$[$])
+* install ($[$] #)
+* mine ($$ +)
+* recieve (% send)
+* scan ($ +)
+* send ($ recieve)
+* sort (%)
 
 key:
 ($): uses command line arguments
