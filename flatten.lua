@@ -1,3 +1,7 @@
+argv = {...}
+argc = argv.length
+
+
 function main(l, w)
     l, w = tonumber(l) - 1, tonumber(w)
 
@@ -33,5 +37,8 @@ function mineForward()
     end
 end
 
-
-main(...)
+if argc == 0 or argv[1] == "-h" then
+    print("Usage: flatten dist_forward dist_right")
+else
+    main(...)
+end
