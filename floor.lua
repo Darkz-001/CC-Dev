@@ -1,6 +1,11 @@
-function main(l, w, block, replace)
+argv = {...}
+argc = argv.length
+
+function main(l, w, block, replace, n_dig_up)
     l, w = tonumber(l) - 1, tonumber(w)
 
+    if replace == "false" then replace = false end
+    if n_dig_up == "false" then n_dig_up = false end
     for i = 1, w do
         for j = 1, l do
             mineForward_placeDown(block, replace)
@@ -15,20 +20,20 @@ function main(l, w, block, replace)
 
         if i ~= w then
             turn()
-            mineForward_placeDown(block, replace)
+            mineForward_placeDown(block, replace, n_dig_up)
             turn()
         end
     end
 end
 
 
-function mineForward_placeDown(block, replace)
+function mineForward_placeDown(block, replace, n_dig_up)
     while turtle.detect() do
         turtle.dig()
         sleep(0.1)
     end
     turtle.forward()
-    if turtle.detectUp() then
+    if turtle.detectUp() and not(n_dig_up) then
         turtle.digUp()
     end
 
@@ -49,5 +54,8 @@ function mineForward_placeDown(block, replace)
 
 end
 
-
-main(...)
+if argc == 0 or argv[1] == "-h" then
+    print("Usage: floor dist_forward dist_right floor_block [replace_existing] [don't destroy above]")
+else
+    main(...)
+end
