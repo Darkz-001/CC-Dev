@@ -1,3 +1,5 @@
+port = peripheral.find("focal_port")
+
 local function align_vector(plane, v2)
 	if plane == "x" then
 		return {x = 0, y = v2[1], z = v2[2]}
@@ -31,3 +33,5 @@ for plane, mat in pairs(aligned) do
         print(v3.x,v3.y,v3.z)
     end
 end
+
+port.writeIota(aligned)
