@@ -22,6 +22,7 @@ planes = {"x","y","z"}
 aligned = {}
 
 for i, plane in ipairs(planes) do
+    table.insert(aligned, {})
     for j, v2 in pairs(v2_mat) do
         table.insert(aligned[i], align_vector(plane, v2))
     end
