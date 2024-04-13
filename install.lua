@@ -1,6 +1,6 @@
 program, extra = ...
 
-if extra == "-r" then
+if extra == "-r" or extra == "-u" then
     shell.run("delete", program .. ".lua")
 end
 
