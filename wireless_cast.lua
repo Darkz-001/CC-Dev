@@ -1,6 +1,8 @@
 CHANNEL = 6016
 
-modem = peripheral.find("modem")
+require("file_spell")
+
+modem = peripheral.wrap("modem_0")
 if modem == nil then
     print("No modem attached")
     return nil
@@ -11,7 +13,7 @@ function main()
     while true do
         local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
         
-        file, delay, expect, channel = unpack(splitTokens(message, true))
+        local file, delay, expect, channel = unpack(splitTokens(message, true))
         
         local spell = readSpell(file)
                 
@@ -19,11 +21,16 @@ function main()
         delay = tonumber(delay)
         channel = tonumber(channel)
         
-        cast(makeSpell(spell), nil, delay, expectReturn, channel)
-    
-        modem.transmit(CHANNEL, CHANNEL, "done")
+        local out = cast(makeSpell(spell), nil, delay, expect, channel)
+        
+        if expect then
+            modem.transmit(CHANNEL, CHANNEL, tostring(out))
+        else
+            modem.transmit(CHANNEL, CHANNEL, "done")
+        end
     end
 end
+
 
 function splitTokens(str, lower)
     local t = {}
@@ -36,3 +43,6 @@ function splitTokens(str, lower)
     end
     return t
 end
+
+
+main()
