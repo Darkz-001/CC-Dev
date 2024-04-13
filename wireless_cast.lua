@@ -7,20 +7,22 @@ if modem == nil then
 end
 modem.open(CHANNEL)
 
-while true do
-    local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+function main()
+    while true do
+        local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+        
+        file, delay, expect, channel = unpack(splitTokens(message, true))
+        
+        local spell = readSpell(file)
+                
+        require("magic")
+        delay = tonumber(delay)
+        channel = tonumber(channel)
+        
+        cast(makeSpell(spell), nil, delay, expectReturn, channel)
     
-    file, delay, expect, channel = unpack(splitTokens(message, true))
-    
-    local spell = readSpell(file)
-            
-    require("magic")
-    delay = tonumber(delay)
-    channel = tonumber(channel)
-    
-    cast(makeSpell(spell), nil, delay, expectReturn, channel)
-
-    modem.transmit(CHANNEL, CHANNEL, "done")
+        modem.transmit(CHANNEL, CHANNEL, "done")
+    end
 end
 
 function splitTokens(str, lower)
