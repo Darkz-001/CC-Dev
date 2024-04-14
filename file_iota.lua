@@ -4,6 +4,18 @@ local function main(process, file, delay, expectReturn, channel)
     if process == "read" then
         local iota = readIota(file)
         print(concat(iota))
+    elseif process == "load" then
+        local iota = readIota(file)
+        local port = peripheral.find("focal_port")
+        if port == nil then
+            error("no port")
+        else
+            if port.canWriteIota() then
+                port.writeIota(iota)
+            else
+                error("can't write iota")
+            end
+        end
     elseif process == "write" then
         writeIota(file)
     elseif process == "cast" then
