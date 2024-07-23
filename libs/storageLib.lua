@@ -208,7 +208,8 @@ StorageSytem = {
             for i, single_list in pairs(self.list) do
                 for slot, contained_item in pairs(single_list) do
                     if contained_item.name == item.name then
-                        if self.inventories[i].getItemLimit(slot) > (contained_item.count + item.count) and tryMergeSlot then
+                        local stack_multiplier = self.inventories[i].getItemDetail(slot)['maxCount'] / 64
+                        if self.inventories[i].getItemLimit(slot) * stack_multiplier > (contained_item.count + item.count) and tryMergeSlot then
                             return i, slot
                         elseif open_slots[i] > 0 then
                             return i
@@ -267,18 +268,19 @@ if not pcall(debug.getlocal, 4, 1) then -- thank you random internet code, jokes
     print("System Initilaized")
     while true do
         local request, limit = table.unpack(splitTokens(io.read()))
-        limit = tonumber(limit)
-        if limit then limit = math.floor(limit) end
-
-        if request == "refresh" and itemCount == nil then
+        
+        if request == "refresh" and limit == nil then -- if a limit is specifed (even if the limit is not a valid number) then ignore keywords
             print("Refreshing...")
             StorageSytem:refresh()
             print("Refreshed")
-        elseif request == "exit" and itemCount == nil then
+        elseif request == "exit" and limit == nil then
             break
         elseif request == "dump" then
             StorageSytem:dump_items()
         elseif request then
+            limit = tonumber(limit)
+            if limit then limit = math.floor(limit) end
+
             if LiveUpdate then
                 StorageSytem:refresh()
             end
