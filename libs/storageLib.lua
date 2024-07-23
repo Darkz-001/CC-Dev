@@ -23,7 +23,6 @@ StorageSytem = {
     output_id = Output_id, -- the output inventory wrap id
     output = peripheral.wrap(Output_id), -- the output inventory peripheral
     search_limit = Search_limit, -- a predifeined number,
-    output_limit = peripheral.wrap(Output_id).getItemLimit(1), -- the max stack in the output, only used in printing, may break if small stack items are in the output inventory
     list = {}, -- a table of tables of items
     sizes = Sizes, -- table of numbers
 
@@ -31,12 +30,10 @@ StorageSytem = {
         local inv_id, slot = table.unpack(item.space)
         local transfered_amount = self.inventories[inv_id].pushItems(self.output_id, slot, limit)
         
-        if limit == nil then limit = math.min(self.output_limit, self.inventories[inv_id].getItemLimit(slot)) end
-
-        if limit >= item.count then
+        if transfered_amount >= item.count then
             self.list[inv_id][slot] = nil
         else
-            self.list[inv_id][slot].count = item.count - limit
+            self.list[inv_id][slot].count = item.count - transfered_amount
         end
 
         print("Extracted", transfered_amount, item.name)
