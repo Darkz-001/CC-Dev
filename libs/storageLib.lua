@@ -1,5 +1,7 @@
 local Output_id = "minecraft:barrel_1" -- the acces point if the script is being run directly
 
+-- DEBUG = true -- yes i know this is an undefined global when commented, too bad nerd
+
 StorageSytem = {
     -- initilize the storage system (please note that the output_id cannot be directional for some reason)
     initilaize = function(self, output_id, search_limit, inventoryBlacklist, liveUpdate, extractOnFullMatch)
@@ -39,7 +41,7 @@ StorageSytem = {
         for i, blacklist_id in pairs(inventoryBlacklist) do
             for j, inventory in pairs(self.inventories) do
                 if peripheral.getName(inventory) == blacklist_id then
-                    table.remove(self.inventories, i) -- remove output from system, can no longer use ipairs
+                    table.remove(self.inventories, j) -- remove output from system, can no longer use ipairs
                     break
                 end
             end
@@ -49,11 +51,20 @@ StorageSytem = {
             self.sizes[i] = inventory.size()
         end
         
-        self.list = self:refresh() -- a table of tables of items
+        self:refresh() -- set self.list
     end,
 
     get_item = function(self, item, limit)
         local inv_id, slot = table.unpack(item.space)
+
+        if DEBUG then
+            print("Item being extracted:", item.name)
+            print("Amount in specified item stack", item.count)
+            print("Slot of specified item stack:", slot)
+            print("Limit:", limit)
+            print("Source id:", peripheral.getName(self.inventories[inv_id]))
+        end
+        
         local transfered_amount = self.inventories[inv_id].pushItems(self.output_id, slot, limit)
         
         if transfered_amount >= item.count then
@@ -61,13 +72,22 @@ StorageSytem = {
         else
             self.list[inv_id][slot].count = item.count - transfered_amount
         end
-
+        
         print("Extracted", transfered_amount, item.name)
-
+        
         return transfered_amount
     end,
-
+    
     send_item = function(self, item, inv_id, limit, toSlot)
+        if DEBUG then
+            print("Item being sent:", item.name)
+            print("Amount in specified item stack", item.count)
+            print("Slot of specified item stack:", item.slot)
+            print("Limit:", limit)
+            print("Destination id:", peripheral.getName(self.inventories[inv_id]))
+            print("Destination slot:", toSlot)
+        end
+
         local transfered_amount = self.inventories[inv_id].pullItems(self.output_id, item.slot, limit, toSlot)
         self.list[inv_id] = self.inventories[inv_id].list() -- refresh entire inventory reference
 
