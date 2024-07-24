@@ -1,6 +1,6 @@
 local Output_id = "minecraft:barrel_1" -- Default access point if script is run directly (change if needed)
 
--- DEBUG = true -- Uncomment this line to enable debug prints (yes I know it is an undefined global, deal with it)
+-- DEBUG = true -- Uncomment this line to enable debug prints (yes I know it is an undefined global, deal with it nerd)
 
 StorageSytem = {
     -- Initialization Function
@@ -50,7 +50,7 @@ StorageSytem = {
         self:refresh() -- Get the initial list of items in inventories
     end,
 
-    -- Extracts a specified item from a connected inventory and moves it to the output chest
+    -- Extracts a specified item from a connected inventory and moves it to the output inventory
     get_item = function(self, item, limit)
         local inv_id, slot = table.unpack(item.space) -- Get inventory ID and slot from item data
 
@@ -62,7 +62,7 @@ StorageSytem = {
             print("Source id:", peripheral.getName(self.inventories[inv_id]))
         end
         
-        -- Push items from the source inventory to the output chest
+        -- Push items from the source inventory to the output inventory
         local transfered_amount = self.inventories[inv_id].pushItems(self.output_id, slot, limit)
         
         -- Update the item list:
@@ -77,7 +77,7 @@ StorageSytem = {
         return transfered_amount
     end,
     
-    -- Deposits a specified item from the output chest into a connected inventory
+    -- Deposits a specified item from the output inventory into a connected inventory
     send_item = function(self, item, inv_id, limit, toSlot)
         if DEBUG then
             print("Item being sent:", item.name)
@@ -87,7 +87,7 @@ StorageSytem = {
             print("Destination id:", peripheral.getName(self.inventories[inv_id]))
             print("Destination slot:", toSlot)
         end
-        -- Pull items from the output chest into the destination inventory
+        -- Pull items from the output inventory into the destination inventory
         local transfered_amount = self.inventories[inv_id].pullItems(self.output_id, item.slot, limit, toSlot)
         
         -- Refresh the entire inventory reference for the destination
@@ -167,8 +167,8 @@ StorageSytem = {
         return items -- Return the list of matching items
     end,
     
-    -- Locates an available chest with space, optionally prioritizing merging with an existing item stack
-    find_open_chest = function(self, item, tryMergeSlot)
+    -- Locates an available inventory with space, optionally prioritizing merging with an existing item stack
+    find_open_inventory = function(self, item, tryMergeSlot)
         local open_slots = {}  -- Table to store the number of open slots per inventory
 
         -- Calculate available slots in each inventory
@@ -185,6 +185,10 @@ StorageSytem = {
                         local stack_multiplier = self.inventories[i].getItemDetail(slot)['maxCount'] / 64
                         local maxStackSize = self.inventories[i].getItemLimit(slot) * stack_multiplier
 
+                        if maxStackSize == 1 then -- if the item is unstackable, don't try to stack it
+                            break
+                        end
+
                         -- If the existing stack and new item can fit, return the inventory ID and slot
                         if (contained_item.count + item.count) < maxStackSize then
                             return i, slot
@@ -194,7 +198,7 @@ StorageSytem = {
             end
 
             -- If no suitable merge was found, try again without merging
-            return self:find_open_chest(item, false) 
+            return self:find_open_inventory(item, false) 
 
         -- Case 2: An item is specified, but merging is not prioritized or not possible
         elseif item then
@@ -208,19 +212,19 @@ StorageSytem = {
                     end
                 end
             end
-            -- If no inventory with the item has open slots, try to find any open chest
-            return self:find_open_chest() 
+            -- If no inventory with the item has open slots, try to find any open inventory
+            return self:find_open_inventory() 
 
-        -- Case 3: No item specified, just find any chest with open slots
+        -- Case 3: No item specified, just find any inventory with open slots
         else
             for i, slots_open in pairs(open_slots) do
                 if slots_open > 0 then
-                    return i   -- Return the inventory ID of the first chest with space
+                    return i   -- Return the inventory ID of the first inventory with space
                 end
             end
         end
 
-        -- If no suitable chest was found in any of the cases, return nil
+        -- If no suitable inventory was found in any of the cases, return nil
         return nil 
     end,
 
@@ -327,17 +331,23 @@ StorageSytem = {
     end,
 
 
-    -- Moves all items from the output chest into connected inventories 
+    -- Moves all items from the output inventory into connected inventories 
     dump_items = function(self)
         self:refresh() -- Refresh the internal list of items in inventories to ensure accuracy
-        for slot, item in pairs(self.output.list()) do -- Iterate over each item in the output chest
+        for slot, item in pairs(self.output.list()) do -- Iterate over each item in the output inventory
             item.slot = slot -- Add the slot information to the item object for later use
 
-            -- Find an open chest to deposit the item, prioritizing merging with an existing stack if possible
-            local dest_id, toSlot = self:find_open_chest(item, true)
+            -- Find an open inventory to deposit the item, prioritizing merging with an existing stack if possible
+            local dest_id, toSlot = self:find_open_inventory(item, true)
 
-            if dest_id then -- If a suitable chest was found
-                self:send_item(item, dest_id, nil, toSlot) -- (limit is nil to move the entire stack)
+            if dest_id then -- If a suitable inventory was found
+                local temp = self:send_item(item, dest_id, nil, toSlot) -- (limit is nil to move the entire stack)
+                if temp == 0 then -- silly stackable nbt item exception (EX: tipped arrows)
+                    dest_id = self:find_open_inventory(item, false)
+                    if dest_id then
+                        self:send_item(item, dest_id)
+                    end
+                end
             end
         end
     end
@@ -345,14 +355,14 @@ StorageSytem = {
 
 -- Check if script is being imported or run directly (thank you random internet code)
 if not pcall(debug.getlocal, 4, 1) then
-    -- Helper function to split a string into tokens (words), optionally converting to lowercase
+    -- Helper function to split a string into tokens, optionally converting to lowercase
     function splitTokens(str, lower)
         if str == nil then return {} end -- Return empty table if input is nil
         
         local t = {} -- Table to store tokens
 
         -- Iterate through each token in the string, matching non-whitespace characters
-        for token in string.gmatch(str, "[^%s]+") do -- regex i made like a year ago
+        for token in string.gmatch(str, "[^%s]+") do -- regex I made like a year ago
             -- Insert the token into the table, converting to lowercase if specified
             if lower then
                 table.insert(t, string.lower(token))
@@ -369,27 +379,37 @@ if not pcall(debug.getlocal, 4, 1) then
 
     -- Main command loop:
     while true do
-        -- Read user input and split it into tokens (command and optional limit)
-        local request, limit = table.unpack(splitTokens(io.read(), true))
-        
-        -- Handle different commands:
+        -- Read user input, split into tokens, and convert to lowercase
+        argv = splitTokens(io.read(), true)
+        argc = #argv
 
+        -- Command dispatcher based on first argument (argv[1])
+        if argc > 0 then
+            local command = argv[1]
 
-        -- If a limit is specifed (even if the limit is not a valid number) then ignore keywords
-        if request == "refresh" and limit == nil then -- Refresh the inventory
-            print("Refreshing...")
-            StorageSytem:refresh()
-            print("Refreshed")
-        elseif request == "exit" and limit == nil then -- Exit the script
-            break
-        elseif request == "dump" and limit == nil then -- Dump all items from the output chest
-            StorageSytem:dump_items()
-        elseif request then -- Process item requests (default case)
-            limit = tonumber(limit) -- Convert limit to number (nil if not provided)
-            if limit then limit = math.floor(limit) end -- Round down the limit if it's a decimal
-
-            -- Call the request_item function to handle item extraction/interaction
-            StorageSytem:request_item(request, limit, false) -- Search without using modID initially
+            -- Check for specific commands first (keywords)
+            if command == "refresh" and argc == 1 then
+                print("Refreshing...")
+                StorageSytem:refresh()
+                print("Refreshed")
+            elseif command == "exit" and argc == 1 then
+                break
+            elseif command == "dump" and argc == 1 then
+                StorageSytem:dump_items()
+            elseif command == "help" and argc == 1 then
+                print("No argument commands: refresh, reset, dump, exit, help")
+                print("Other commands: count (unimplemented) [requires exact item name (with or without modId)]")
+                print("To request an item, simply type its name. Use '> <item_name> [limit]' to bypass keywords.")
+            elseif command == "count" and argc == 2 then
+                local exact_name = argv[2]
+                -- [TODO: Implement count functionality]
+            
+            -- If not a specific command, treat the input as an item request
+            else 
+                local limit = argc >= 2 and tonumber(argv[2]) or nil -- Optional limit from second argument
+                if limit then limit = math.floor(limit) end
+                StorageSytem:request_item(command, limit, false) -- Request the item
+            end
         end
     end
 end
