@@ -262,14 +262,7 @@ StorageSytem = {
             item.slot = slot
             local dest_id, toSlot = self:find_open_chest(item, true)
             if dest_id then
-                local temp = self:send_item(item, dest_id, nil, toSlot)
-                if temp == 0 then -- false slot merging with smaller stacking items
-                    print("Whoops, let's try that again")
-                    dest_id = self:find_open_chest(item, false)
-                    if dest_id then
-                        self:send_item(item, dest_id)
-                    end
-                end
+                self:send_item(item, dest_id, nil, toSlot)
             end
         end
         self:refresh()
