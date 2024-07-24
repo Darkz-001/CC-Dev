@@ -285,7 +285,6 @@ if not pcall(debug.getlocal, 4, 1) then -- thank you random internet code, jokes
     end
     
     StorageSytem:initilaize(Output_id, 9)
-    StorageSytem:refresh()
     print("System Initilaized")
     while true do
         local request, limit = table.unpack(splitTokens(io.read()))
