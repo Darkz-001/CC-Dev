@@ -1,30 +1,56 @@
-LiveUpdate = false -- will slow down all requests based on the number of connected storages but will always be accurate
-ExtractOnFullMatch = true -- when getting multiple items will automatically extract if one perfectly matches the input
-
-local Inventories = {peripheral.find('inventory')} -- get all inventories
-local Output_id = "minecraft:barrel_1" -- determine the output location (cannot be directional for some reason)
-local Search_limit = 9
-
-local Sizes = {}
-
-for i, inventory in pairs(Inventories) do
-    if peripheral.getName(inventory) == Output_id then
-        table.remove(Inventories, i) -- remove output from system, can no longer use ipairs
-        break
-    end
-end
-
-for i, inventory in pairs(Inventories) do
-    Sizes[i] = inventory.size()
-end
+local Output_id = "minecraft:barrel_1" -- the acces point if the script is being run directly
 
 StorageSytem = {
-    inventories = Inventories, -- the list of all connected inventories (that are not the output)
-    output_id = Output_id, -- the output inventory wrap id
-    output = peripheral.wrap(Output_id), -- the output inventory peripheral
-    search_limit = Search_limit, -- a predifeined number,
-    list = {}, -- a table of tables of items
-    sizes = Sizes, -- table of numbers
+    -- initilize the storage system (please note that the output_id cannot be directional for some reason)
+    initilaize = function(self, output_id, search_limit, inventoryBlacklist, liveUpdate, extractOnFullMatch)
+        if search_limit == nil then
+            search_limit = 9
+        end
+        self.search_limit = search_limit -- a predifeined number,
+        if liveUpdate == nil then
+            liveUpdate = false
+        end
+        self.liveUpdate = liveUpdate
+        if extractOnFullMatch == nil then
+            extractOnFullMatch = true
+        end
+        self.extractOnFullMatch = extractOnFullMatch
+
+        if type(inventoryBlacklist) == "string" then
+            inventoryBlacklist = {inventoryBlacklist}
+        elseif type(inventoryBlacklist) ~= "table" then
+            inventoryBlacklist = {}
+        end
+
+        for _, side in ipairs({"top", "bottom", "left", "right", "back", "front"}) do
+            table.insert(inventoryBlacklist, side) -- remove any inventories directly attached to the computer as they are buggy
+        end
+        
+        self.output_id = output_id -- the output inventory wrap id
+        table.insert(inventoryBlacklist, output_id) -- remove the output as an accesible inventory
+        
+        self.output = peripheral.wrap(output_id) -- the output inventory peripheral
+        
+        self.inventoryBlacklist = inventoryBlacklist -- store the finalized blacklist
+
+        self.inventories = {peripheral.find('inventory')} -- the list of all connected inventories (that are not the output)
+        self.sizes = {} -- table of numbers
+        
+        for i, blacklist_id in pairs(inventoryBlacklist) do
+            for j, inventory in pairs(self.inventories) do
+                if peripheral.getName(inventory) == blacklist_id then
+                    table.remove(self.inventories, i) -- remove output from system, can no longer use ipairs
+                    break
+                end
+            end
+        end
+        
+        for i, inventory in pairs(self.inventories) do
+            self.sizes[i] = inventory.size()
+        end
+        
+        self.list = self:refresh() -- a table of tables of items
+    end,
 
     get_item = function(self, item, limit)
         local inv_id, slot = table.unpack(item.space)
@@ -117,6 +143,10 @@ StorageSytem = {
     end,
 
     request_item = function(self, partial_name, limit, use_modID, multiChoiceSkip) -- the ultimate function
+        if self.liveUpdate then
+            self:refresh()
+        end
+
         if limit then
             if limit > 64 then
                 print("Please note that the system can only extract one item stack at a time\nExtracting more than 64 items will only work when both the output container and the pulled storages can hold larger stacks\nIf these conditions are not met you may need to refresh after the request\n\n")
@@ -136,7 +166,7 @@ StorageSytem = {
             local do_prompt = not multiChoiceSkip
 
             for i, match in pairs(matches) do
-                if (match.cut_name == partial_name or match.name == partial_name) and ExtractOnFullMatch then
+                if (match.cut_name == partial_name or match.name == partial_name) and self.extractOnFullMatch then
                     StorageSytem:get_item(match, limit)
                     do_prompt = false
                     break
@@ -167,7 +197,7 @@ StorageSytem = {
         elseif #matches > self.search_limit and not use_modID then
             local do_print = true
             for i, match in pairs(matches) do
-                if match.cut_name == partial_name and ExtractOnFullMatch then
+                if match.cut_name == partial_name and self.extractOnFullMatch then
                     StorageSytem:get_item(match, limit)
                     do_print = false
                     break
@@ -180,7 +210,7 @@ StorageSytem = {
         elseif #matches > self.search_limit and use_modID then
             local do_print = true
             for i, match in pairs(matches) do
-                if match.name == partial_name and ExtractOnFullMatch then
+                if match.name == partial_name and self.extractOnFullMatch then
                     StorageSytem:get_item(match, limit)
                     do_print = false
                     break
@@ -261,6 +291,7 @@ if not pcall(debug.getlocal, 4, 1) then -- thank you random internet code, jokes
         return t
     end
     
+    StorageSytem:initilaize(Output_id, 9)
     StorageSytem:refresh()
     print("System Initilaized")
     while true do
@@ -278,9 +309,6 @@ if not pcall(debug.getlocal, 4, 1) then -- thank you random internet code, jokes
             limit = tonumber(limit)
             if limit then limit = math.floor(limit) end
 
-            if LiveUpdate then
-                StorageSytem:refresh()
-            end
             StorageSytem:request_item(request, limit, false)
         end
     end
