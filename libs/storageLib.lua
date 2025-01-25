@@ -1,6 +1,6 @@
-local Output_id = "minecraft:barrel_1" -- Default access point if script is run directly (change if needed)
+local Output_id = "minecraft:barrel_0" -- Default access point if script is run directly (change if needed)
 
--- DEBUG = true -- Uncomment this line to enable debug prints (yes I know it is an undefined global, deal with it nerd)
+DEBUG = false -- Use this to enable debug prints
 
 StorageSytem = {
     -- Initialization Function
@@ -198,7 +198,7 @@ StorageSytem = {
             end
 
             -- If no suitable merge was found, try again without merging
-            return self:find_open_inventory(item, false) 
+            return self:find_open_inventory(item, false)
 
         -- Case 2: An item is specified, but merging is not prioritized or not possible
         elseif item then
@@ -206,14 +206,14 @@ StorageSytem = {
                 for slot, contained_item in pairs(single_list) do  -- Iterate over items in each inventory
                     if contained_item.name == item.name then   -- Check for matching item
                         -- Even if merging isn't possible, return this inventory if it has open slots
-                        if open_slots[i] > 0 then 
+                        if open_slots[i] > 0 then
                             return i  -- Return the inventory ID
                         end
                     end
                 end
             end
             -- If no inventory with the item has open slots, try to find any open inventory
-            return self:find_open_inventory() 
+            return self:find_open_inventory()
 
         -- Case 3: No item specified, just find any inventory with open slots
         else
@@ -225,7 +225,7 @@ StorageSytem = {
         end
 
         -- If no suitable inventory was found in any of the cases, return nil
-        return nil 
+        return nil
     end,
 
     -- Main user interface function: prompts for item name, finds matches, and handles extraction/interaction
@@ -243,7 +243,7 @@ StorageSytem = {
         end
         
         -- Find items matching the given partial name, using modID if specified
-        matches = self:find_items(partial_name, use_modID)
+        local matches = self:find_items(partial_name, use_modID)
 
         -- Handle different scenarios based on the number of matches found:
 
@@ -331,7 +331,7 @@ StorageSytem = {
     end,
 
 
-    -- Moves all items from the output inventory into connected inventories 
+    -- Moves all items from the output inventory into connected inventories
     dump_items = function(self)
         self:refresh() -- Refresh the internal list of items in inventories to ensure accuracy
         for slot, item in pairs(self.output.list()) do -- Iterate over each item in the output inventory
@@ -356,7 +356,7 @@ StorageSytem = {
 -- Check if script is being imported or run directly (thank you random internet code)
 if not pcall(debug.getlocal, 4, 1) then
     -- Helper function to split a string into tokens, optionally converting to lowercase
-    function splitTokens(str, lower)
+    local function splitTokens(str, lower)
         if str == nil then return {} end -- Return empty table if input is nil
         
         local t = {} -- Table to store tokens
@@ -405,7 +405,7 @@ if not pcall(debug.getlocal, 4, 1) then
                 -- [TODO: Implement count functionality]
             
             -- If not a specific command, treat the input as an item request
-            else 
+            else
                 local limit = argc >= 2 and tonumber(argv[2]) or nil -- Optional limit from second argument
                 if limit then limit = math.floor(limit) end
                 StorageSytem:request_item(command, limit, false) -- Request the item
