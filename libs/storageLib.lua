@@ -343,9 +343,9 @@ StorageSytem = {
             if dest_id then -- If a suitable inventory was found
                 local temp = self:send_item(item, dest_id, nil, toSlot) -- (limit is nil to move the entire stack)
                 if temp == 0 then -- silly stackable nbt item exception (EX: tipped arrows)
-                    dest_id = self:find_open_inventory(item, false)
+                    dest_id, toSlot = self:find_open_inventory(item, false)
                     if dest_id then
-                        self:send_item(item, dest_id)
+                        self:send_item(item, dest_id, nil, toSlot)
                     end
                 end
             end
@@ -380,8 +380,8 @@ if not pcall(debug.getlocal, 4, 1) then
     -- Main command loop:
     while true do
         -- Read user input, split into tokens, and convert to lowercase
-        argv = splitTokens(io.read(), true)
-        argc = #argv
+        local argv = splitTokens(io.read(), true)
+        local argc = #argv
 
         -- Command dispatcher based on first argument (argv[1])
         if argc > 0 then
