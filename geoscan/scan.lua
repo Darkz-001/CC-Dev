@@ -11,7 +11,7 @@ local function main(target)
     for i, block in pairs(blocks) do
         if GetDistance(block) < dis and string.find(block.name, target) then
             Closest = block
-            local dis = GetDistance(block)
+            dis = GetDistance(block)
         end
     end
 
