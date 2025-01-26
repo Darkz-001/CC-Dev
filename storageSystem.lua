@@ -2,6 +2,7 @@ StorageLib = require("storageLib")
 
 local Output_id = "" -- Default access point (change if needed)
 local DumpBlacklist = {} -- Blacklist for the dump command (when not stacking)
+local max_choices = 9
 
 -- Helper function to split a string into tokens, optionally converting to lowercase
 local function splitTokens(str, lower)
@@ -22,7 +23,7 @@ local function splitTokens(str, lower)
 end
 
 -- Initialize the storage system with default parameters (output_id and search limit)
-StorageSytem = StorageLib.new(Output_id, 9, {}, false, true, DumpBlacklist)
+StorageSytem = StorageLib.new(Output_id, max_choices, {}, false, true, DumpBlacklist)
 print("System Initilaized")
 
 -- Main command loop:
@@ -40,6 +41,10 @@ while true do
             print("Refreshing...")
             StorageSytem:refresh()
             print("Refreshed")
+        elseif command == "reset" and argc == 1 then
+            print("Resetting...")
+            StorageSytem = StorageLib.new(Output_id, max_choices, {}, false, true, DumpBlacklist)
+            print("Reset")
         elseif command == "exit" and argc == 1 then
             break
         elseif command == "dump" and argc == 1 then
