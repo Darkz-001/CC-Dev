@@ -220,7 +220,7 @@ function StorageSytem.find_open_inventory(self, item, tryMergeSlot, useDumpBlack
         end
 
         -- If no suitable merge was found, try again without merging
-        return self:find_open_inventory(item, false)
+        return self:find_open_inventory(item, false, useDumpBlacklist)
 
     -- Case 2: An item is specified, but merging is not prioritized or not possible
     elseif item then
@@ -235,7 +235,7 @@ function StorageSytem.find_open_inventory(self, item, tryMergeSlot, useDumpBlack
             end
         end
         -- If no inventory with the item has open slots, try to find any open inventory
-        return self:find_open_inventory()
+        return self:find_open_inventory(nil, false, useDumpBlacklist)
 
     -- Case 3: No item specified, just find any inventory with open slots
     else
@@ -371,7 +371,7 @@ function StorageSytem.dump_items(self)
         if dest_id then -- If a suitable inventory was found
             local temp = self:send_item(item, dest_id, nil, toSlot) -- (limit is nil to move the entire stack)
             if temp == 0 then -- silly stackable nbt item exception (EX: tipped arrows)
-                dest_id = self:find_open_inventory(item, false)
+                dest_id = self:find_open_inventory(item, false, true)
                 if dest_id then
                     self:send_item(item, dest_id)
                 end
