@@ -16,7 +16,7 @@ StorageSytem.__index = StorageSytem
 
 -- Initialization Function
 -- Sets up the storage system, including inventory blacklist, output peripheral, and initial item list
-function StorageSytem.new(output_id, search_limit, inventoryBlacklist, liveUpdate, extractOnFullMatch, DumpBlacklist)
+function StorageSytem.new(output_id, search_limit, inventoryBlacklist, liveUpdate, extractOnFullMatch, dumpBlacklist)
     local system = {}
     -- Handle optional parameters with default values
     if search_limit == nil then search_limit = 9 end
@@ -28,8 +28,8 @@ function StorageSytem.new(output_id, search_limit, inventoryBlacklist, liveUpdat
     if extractOnFullMatch == nil then extractOnFullMatch = true end
     system.extractOnFullMatch = extractOnFullMatch
 
-    if DumpBlacklist == nil then DumpBlacklist = {} end
-    system.DumpBlacklist = DumpBlacklist
+    if dumpBlacklist == nil then dumpBlacklist = {} end
+    system.dumpBlacklist = dumpBlacklist
 
 
     -- Ensure inventoryBlacklist is a table, and add default blacklisted sides
@@ -242,7 +242,7 @@ function StorageSytem.find_open_inventory(self, item, tryMergeSlot, useDumpBlack
         for i, slots_open in pairs(open_slots) do
             if slots_open > 0 then
                 if useDumpBlacklist then
-                    if not table.contains(self.dump_blacklist, self.inventories[i].getName()) then
+                    if not table.contains(self.dumpBlacklist, self.inventories[i].getName()) then
                         return i   -- Return the inventory ID of the first inventory with space
                     end
                 else
