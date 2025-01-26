@@ -1,7 +1,7 @@
 local program, extra = ...
 
 if extra == "-r" or extra == "-u" then
-    local name = program
+    local name = ... -- Get the name of the program again
     while string.find(name, "/") do
         name = string.sub(name, string.find(name, "/") + 1, -1)
     end
