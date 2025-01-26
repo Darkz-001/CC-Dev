@@ -1,10 +1,11 @@
 local program, extra = ...
 
 if extra == "-r" or extra == "-u" then
-    while string.find(program, "/") do
-        program = string.sub(program, string.find(program, "/") + 1, -1)
+    local name = program
+    while string.find(name, "/") do
+        name = string.sub(name, string.find(name, "/") + 1, -1)
     end
-    shell.run("delete", program .. ".lua")
+    shell.run("delete", name .. ".lua")
 end
 
 shell.run("wget", "https://raw.githubusercontent.com/Darkz-001/CC-Dev/main/" .. program .. ".lua")
