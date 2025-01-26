@@ -13,9 +13,9 @@ local gemini = require("gemini")
 gemini.setAPIKey(apiKey)
 
 while true do
-    local event, side, channel, replyChannel, message, distance = os.pullEvent('chat')
-    if string.find(message, "Hey Gemini") then
-        local response, err = gemini.generateContent(message)
+    local event, username, message, user_uuid, isHidden = os.pullEvent('chat')
+    if string.find(string.lower(message), "gemini") then
+        local response, err = gemini.generateContent(username .. " said:" .. message)
         if response then
             chatBox.sendMessage(response, "Gemini")
         else
