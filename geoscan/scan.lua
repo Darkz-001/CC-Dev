@@ -1,17 +1,17 @@
 Scanner = peripheral.find("geoScanner")
 
 
-function main(target)
-    blocks = Scanner.scan(8)
+local function main(target)
+    local blocks = Scanner.scan(8)
     sleep(1)
 
-    dis = math.huge
+    local dis = math.huge
     local Closest = {}
 
     for i, block in pairs(blocks) do
-        if getDistance(block) < dis and string.find(block.name, target) then
+        if GetDistance(block) < dis and string.find(block.name, target) then
             Closest = block
-            dis = getDistance(block)
+            local dis = GetDistance(block)
         end
     end
 
@@ -19,7 +19,7 @@ function main(target)
 end
 
 
-function getDistance(block)
+function GetDistance(block)
     return math.abs(block.x) + math.abs(block.y) + math.abs(block.z)
 end
 

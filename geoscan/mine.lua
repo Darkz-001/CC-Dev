@@ -1,7 +1,8 @@
 Scanner = peripheral.find("geoScanner")
 
+turtle.facing = 0 -- 0 = +X, 1 = -X, 2 = +Z, 3 = -Z
 
-function main(target, targetAmount)
+local function main(target, targetAmount)
     turtle.refuel()
 
     if turtle.getFuelLevel() < 1000 then
@@ -28,16 +29,21 @@ function main(target, targetAmount)
         z = 0
     }
 
-    while obtained < targetAmount and turtle.getFuelLevel() > 2 * getDistance(traveled) do
-        block = find(target)
+    local scanDistance = 1
+
+    while obtained < targetAmount and turtle.getFuelLevel() > 2 * GetDistance(traveled) do
+        local block = Find(target)
         if block ~= nil then
             GoTo(block.x, block.y, block.z)
-            traveled = addDistance(traveled, block)
+            traveled = AddDistance(traveled, block)
             obtained = obtained + 1
+            scanDistance = 1 -- set scan distance to 1 so if another block is close it will be found faster
+        elseif scanDistance < 8 then
+            scanDistance = scanDistance + 1
         elseif traveled.y == 0 then
-            GoTo(8, 0, 0)
-            traveled = addDistance(traveled, {
-                x = 8,
+            GoTo(9, 0, 0)
+            traveled = AddDistance(traveled, {
+                x = 9,
                 y = 0,
                 z = 0
             })
@@ -53,22 +59,22 @@ end
 -- Go to a realitive x y z
 function GoTo(x, y, z)
     if x > 0 then
-        forward(x)
+        Forward(x)
     elseif x < 0 then
         turtle.turnLeft()
         turtle.turnLeft()
-        forward(math.abs(x))
+        Forward(math.abs(x))
         turtle.turnLeft()
         turtle.turnLeft()
     end
 
     if z > 0 then
         turtle.turnRight()
-        forward(z)
+        Forward(z)
         turtle.turnLeft()
     elseif z < 0 then
         turtle.turnLeft()
-        forward(math.abs(z))
+        Forward(math.abs(z))
         turtle.turnRight()
     end
 
@@ -88,7 +94,7 @@ function GoTo(x, y, z)
 end
 
 
-function addDistance(coords, otherCoords)
+function AddDistance(coords, otherCoords)
     coords.x = coords.x + otherCoords.x
     coords.y = coords.y + otherCoords.y
     coords.z = coords.z + otherCoords.z
@@ -97,7 +103,7 @@ function addDistance(coords, otherCoords)
 end
 
 
-function forward(n)
+function Forward(n)
     for i = 1, n do
         while not turtle.forward() do
             turtle.dig()
@@ -106,21 +112,23 @@ function forward(n)
 end
 
 
-function find(target)
-    blocks = Scanner.scan(8)
+function Find(target, distance)
+    if distance == nil then distance = 8 end
+
+    local blocks = Scanner.scan(distance)
     
     while blocks == nil do
-        blocks = Scanner.scan(8)
+        blocks = Scanner.scan(distance)
         sleep(0.75)
     end
 
-    dis = math.huge
+    local dis = math.huge
     local closestBlock
 
     for i, block in pairs(blocks) do
-        if getDistance(block) < dis and string.find(block.name, target) then
+        if GetDistance(block) < dis and string.find(block.name, target) then
             closestBlock = block
-            dis = getDistance(block)
+            dis = GetDistance(block)
         end
     end
 
@@ -128,7 +136,7 @@ function find(target)
 end
 
 
-function getDistance(block)
+function GetDistance(block)
     return (math.abs(block.x) + math.abs(block.y) + math.abs(block.z))
 end
 
