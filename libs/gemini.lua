@@ -94,4 +94,9 @@ function gemini.generateContent(prompt)
     return responseText, nil
 end
 
+-- Function to set the API key (you could just do this manually in the code with gemini.apiKey = "YOUR_API_KEY")
+function gemini.setAPIKey(key)
+    gemini.apiKey = key
+end
+
 return gemini
