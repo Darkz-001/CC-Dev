@@ -9,8 +9,8 @@ SPLITS = {
 
 OTHER = "right"
 
-function main()
-    read = peripheral.wrap(ORIGIN)
+local function main()
+    local read = peripheral.wrap(ORIGIN)
 
     while true do
         local slot, name, count = pop(read)
@@ -47,7 +47,7 @@ function pop(inv)
 end
 
 function detach_key(t)
-    new = {}
+    local new = {}
     for key, value in pairs(t) do
         table.insert(new,
             {
