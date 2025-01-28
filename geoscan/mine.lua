@@ -1,5 +1,6 @@
 Unlimited_works = false
 
+DEBUG = true -- Use this to enable debug prints
 turtle.facing = 1 -- 0 = -Z/north, 1 = +X/east, 2 = +Z/south, 3 = -X/west
 
 Scanner = peripheral.find("geoScanner")
@@ -77,6 +78,10 @@ local function main(target, targetAmount, facing)
     while obtained < targetAmount and turtle.getFuelLevel() > 2 * GetDistance(traveled) do
         local block = Find(target)
         if block ~= nil then
+            if DEBUG then
+                print("Found", block.name, "at", block.x, block.y, block.z)
+            end
+            
             GoTo(block.x, block.y, block.z)
             traveled = AddDistance(traveled, block)
             obtained = obtained + 1
