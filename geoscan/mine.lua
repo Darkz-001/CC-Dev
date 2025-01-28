@@ -39,19 +39,21 @@ end
 
 -- for whatever reason unlimited works returns coords relative to the turtle's facing direction
 function JustifyWorksScan(block)
+    local x, z = block.x, block.z -- store x and z for later
+
     if turtle.facing == 1 then -- east (lines up with default axes)
         return block
     elseif turtle.facing == 3 then -- west (negatives of default axes)
-        block.x = block.x * -1
-        block.z = block.z * -1
+        block.x = x * -1
+        block.z = z * -1
         return block
     elseif turtle.facing == 2 then -- south (funky)
-        block.x = block.z * -1
-        block.z = block.x
+        block.x = z * -1
+        block.z = x
         return block
     elseif turtle.facing == 0 then -- north (also funky)
-        block.x = block.z
-        block.z = block.x * -1
+        block.x = z
+        block.z = x * -1
         return block
     end
         
