@@ -1,8 +1,22 @@
+Unlimited_works = false
+
 Scanner = peripheral.find("geoScanner")
+
+if Unlimited_works then
+    Scanner = peripheral.find("universal_scanner") -- different mod, different name and syntax
+end
+
+function Scan(distance)
+    if Unlimited_works then
+        return Scanner.scan("block", distance) -- different mod, different name and syntax
+    end
+
+    return Scanner.scan(distance)
+end
 
 
 local function main(target)
-    local blocks = Scanner.scan(8)
+    local blocks = Scan(8)
     sleep(1)
 
     local dis = math.huge

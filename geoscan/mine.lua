@@ -1,13 +1,13 @@
-local unlimited_works = false
+Unlimited_works = false
 
 Scanner = peripheral.find("geoScanner")
 
-if unlimited_works then
+if Unlimited_works then
     Scanner = peripheral.find("universal_scanner") -- different mod, different name and syntax
 end
 
 function Scan(distance)
-    if unlimited_works then
+    if Unlimited_works then
         return Scanner.scan("block", distance) -- different mod, different name and syntax
     end
 
