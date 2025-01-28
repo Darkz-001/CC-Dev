@@ -1,5 +1,7 @@
 Unlimited_works = false
 
+turtle.facing = 1 -- 0 = -Z/north, 1 = +X/east, 2 = +Z/south, 3 = -X/west
+
 Scanner = peripheral.find("geoScanner")
 
 if Unlimited_works then
@@ -7,6 +9,25 @@ if Unlimited_works then
 end
 
 function Scan(distance)
+    --[[
+        Uses either the advancedPeripherals geoScanner or the universalPeripherals universal_scanner to get a table of surrounding blocks
+
+        args:
+            distance: the distance to scan in blocks (scans in a cube with side length 2*distance + 1 centered on the turtle)
+
+        returns:
+            a table of blocks
+            {
+                {
+                    name: the name of the block
+                    x: the x coordinate of the block realitive to the turtle
+                    y: the y coordinate of the block realitive to the turtle
+                    z: the z coordinate of the block realitive to the turtle
+                    ... (more data, not particularly important in this case)
+                },
+                ...
+            }
+    ]]
     if Unlimited_works then
         return Scanner.scan("block", distance) -- different mod, different name and syntax
     end
@@ -14,10 +35,18 @@ function Scan(distance)
     return Scanner.scan(distance)
 end
 
-turtle.facing = 0 -- 0 = +X, 1 = -X, 2 = +Z, 3 = -Z
 
-local function main(target, targetAmount)
+local function main(target, targetAmount, facing)
     turtle.refuel()
+
+    if facing ~= nil then
+        facing = tonumber(facing)
+        if facing < 0 or facing > 3 or facing % 1 ~= 0 then
+            print("facing must be 0, 1, 2, or 3")
+            return
+        end
+        turtle.facing = facing
+    end
 
     if turtle.getFuelLevel() < 1000 then
         print("You need at least 1000 units of fuel to start mining")
@@ -73,25 +102,61 @@ end
 -- Go to a realitive x y z
 function GoTo(x, y, z)
     if x > 0 then
+        if turtle.facing ~= 1 then -- Check if already facing +X
+            if turtle.facing == 0 then
+                turtle.turnRight()
+            elseif turtle.facing == 2 then
+                turtle.turnLeft()
+            elseif turtle.facing == 3 then
+                turtle.turnLeft()
+                turtle.turnLeft()
+            end
+            turtle.facing = 1
+        end
         Forward(x)
     elseif x < 0 then
-        turtle.turnLeft()
-        turtle.turnLeft()
+        if turtle.facing ~= 3 then -- Check if already facing -X
+            if turtle.facing == 0 then
+                turtle.turnLeft()
+            elseif turtle.facing == 1 then
+                turtle.turnLeft()
+                turtle.turnLeft()
+            elseif turtle.facing == 2 then
+                turtle.turnRight()
+            end
+            turtle.facing = 3
+        end
         Forward(math.abs(x))
-        turtle.turnLeft()
-        turtle.turnLeft()
     end
 
     if z > 0 then
-        turtle.turnRight()
+        if turtle.facing ~= 2 then
+            if turtle.facing == 0 then
+                turtle.turnLeft()
+                turtle.turnLeft()
+            elseif turtle.facing == 1 then
+                turtle.turnRight()
+            elseif turtle.facing == 3 then
+                turtle.turnLeft()
+            end
+        end
+        turtle.facing = 2
         Forward(z)
-        turtle.turnLeft()
     elseif z < 0 then
-        turtle.turnLeft()
+        if turtle.facing ~= 0 then
+            if turtle.facing == 1 then
+                turtle.turnLeft()
+            elseif turtle.facing == 2 then
+                turtle.turnLeft()
+                turtle.turnLeft()
+            elseif turtle.facing == 3 then
+                turtle.turnRight()
+            end
+        end
+        turtle.facing = 0
         Forward(math.abs(z))
-        turtle.turnRight()
     end
-
+    
     if y > 0 then
         for i = 1, y do
             while not turtle.up() do
