@@ -1,4 +1,18 @@
+local unlimited_works = false
+
 Scanner = peripheral.find("geoScanner")
+
+if unlimited_works then
+    Scanner = peripheral.find("universal_scanner") -- different mod, different name and syntax
+end
+
+function Scan(distance)
+    if unlimited_works then
+        return Scanner.scan("block", distance) -- different mod, different name and syntax
+    end
+
+    return Scanner.scan(distance)
+end
 
 turtle.facing = 0 -- 0 = +X, 1 = -X, 2 = +Z, 3 = -Z
 
@@ -115,10 +129,10 @@ end
 function Find(target, distance)
     if distance == nil then distance = 8 end
 
-    local blocks = Scanner.scan(distance)
+    local blocks = Scan(distance)
     
     while blocks == nil do
-        blocks = Scanner.scan(distance)
+        blocks = Scan(distance)
         sleep(0.75)
     end
 
