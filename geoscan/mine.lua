@@ -53,7 +53,7 @@ local function main(target, targetAmount)
             obtained = obtained + 1
             scanDistance = 1 -- set scan distance to 1 so if another block is close it will be found faster
         elseif scanDistance < 8 then
-            scanDistance = scanDistance + 1
+            scanDistance = scanDistance * 2
         elseif traveled.y == 0 then
             GoTo(9, 0, 0)
             traveled = AddDistance(traveled, {
