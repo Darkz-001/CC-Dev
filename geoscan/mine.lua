@@ -37,6 +37,28 @@ function Scan(distance)
 end
 
 
+-- for whatever reason unlimited works returns coords relative to the turtle's facing direction
+function JustifyWorksScan(block)
+    if turtle.facing == 1 then -- east (lines up with default axes)
+        return block
+    elseif turtle.facing == 3 then -- west (negatives of default axes)
+        block.x = block.x * -1
+        block.z = block.z * -1
+        return block
+    elseif turtle.facing == 2 then -- south (funky)
+        block.x = block.z * -1
+        block.z = block.x
+        return block
+    elseif turtle.facing == 0 then -- north (also funky)
+        block.x = block.z
+        block.z = block.x * -1
+        return block
+    end
+        
+    
+end
+
+
 local function main(target, targetAmount, facing)
     turtle.refuel()
 
@@ -81,7 +103,11 @@ local function main(target, targetAmount, facing)
             if DEBUG then
                 print("Found", block.name, "at", block.x, block.y, block.z)
             end
-            
+
+            if Unlimited_works then
+                block = JustifyWorksScan(block)
+            end
+
             GoTo(block.x, block.y, block.z)
             traveled = AddDistance(traveled, block)
             obtained = obtained + 1
@@ -106,6 +132,11 @@ end
 
 -- Go to a realitive x y z
 function GoTo(x, y, z)
+    if debug then
+        print("Going to", x, y, z)
+        print("Facing", turtle.facing)
+    end
+
     if x > 0 then
         if turtle.facing ~= 1 then -- Check if already facing +X
             if turtle.facing == 0 then
@@ -134,6 +165,10 @@ function GoTo(x, y, z)
         Forward(math.abs(x))
     end
 
+    if DEBUG then
+        print("Now facing", turtle.facing)
+    end
+
     if z > 0 then
         if turtle.facing ~= 2 then
             if turtle.facing == 0 then
@@ -160,6 +195,10 @@ function GoTo(x, y, z)
         end
         turtle.facing = 0
         Forward(math.abs(z))
+    end
+
+    if DEBUG then
+        print("Now facing", turtle.facing)
     end
     
     if y > 0 then
