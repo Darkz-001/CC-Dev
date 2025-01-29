@@ -1,6 +1,6 @@
 Unlimited_works = false
 
-DEBUG = true -- Use this to enable debug prints
+DEBUG = true -- Use this to enable debug prints (you don't really see the console much anyway)
 turtle.facing = 1 -- 0 = -Z/north, 1 = +X/east, 2 = +Z/south, 3 = -X/west
 
 Scanner = peripheral.find("geoScanner")
@@ -56,13 +56,31 @@ function JustifyWorksScan(block)
         block.z = x * -1
         return block
     end
-        
-    
 end
 
 
-local function main(target, targetAmount, facing)
+local function main(target, targetAmount, y_offset, facing)
+    if target == "-h"  or target == "--help" then -- help override
+        print("Usage: mine <target> <targetAmount> <y_offset> <facing>")
+        print("target: the block to mine")
+        print("targetAmount: how many of the target to mine")
+        print("y_offset: how many blocks down to start")
+        print("facing: which direction to face (0 = -Z/north, 1 = +X/east, 2 = +Z/south, 3 = -X/west)")
+        return
+    end
+
     turtle.refuel()
+
+    if y_offset ~= nil then
+        y_offset = -1 * tonumber(y_offset) -- offset downwards
+        if y_offset % 1 ~= 0 then
+            print("y_offset must be an integer")
+            return
+        end
+        GoTo(0, y_offset, 0)
+    else
+        y_offset = 0
+    end
 
     if facing ~= nil then
         facing = tonumber(facing)
@@ -93,7 +111,7 @@ local function main(target, targetAmount, facing)
     local obtained = 0
     local traveled = {
         x = 0,
-        y = 0,
+        y = y_offset,
         z = 0
     }
 
