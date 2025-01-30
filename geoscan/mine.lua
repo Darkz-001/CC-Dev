@@ -134,7 +134,7 @@ local function main(target, targetAmount, y_offset, facing)
             scanDistance = 1 -- set scan distance to 1 so if another block is close it will be found faster
         elseif scanDistance < 8 then
             scanDistance = scanDistance * 2
-        elseif traveled.y == 0 then
+        elseif traveled.y - y_offset == 0 then
             GoTo(9, 0, 0)
             traveled = AddDistance(traveled, {
                 x = 9,
@@ -142,7 +142,7 @@ local function main(target, targetAmount, y_offset, facing)
                 z = 0
             })
         else
-            GoTo(0, -traveled.y, 0)
+            GoTo(0, -(traveled.y - y_offset), 0)
             traveled.y = 0
         end
     end
